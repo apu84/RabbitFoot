@@ -1,15 +1,17 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const config = require('./config');
+
 module.exports = {
   context: __dirname + '/',
-  entry: ['./src/app.module.ts', './styles/scss/main.scss'],
+  entry: [config.src.ts, config.src.scss],
   output: {
-    path: path.resolve(process.cwd(), 'dist'),
-    filename: 'bundle.js'
+    path: path.resolve(process.cwd(), config.dist),
+    filename: config.dest.js
   },
   devServer: {
-    contentBase: "./dist",
+    contentBase: config.dist,
     hot: true
   },
   resolve: {
@@ -22,9 +24,6 @@ module.exports = {
         test: /\.scss$/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-
-          // Could also be write as follow:
-          // use: 'css-loader?modules&importLoader=2&sourceMap&localIdentName=[name]__[local]___[hash:base64:5]!sass-loader'
           use: [
             {
               loader: 'css-loader',
@@ -62,9 +61,9 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([{
       from: './src/*.html',
-      to: __dirname + '/dist',
+      to: '.',
       flatten: true
     }]),
-    new ExtractTextPlugin({filename:"style.css"})
+    new ExtractTextPlugin({filename: config.dest.css})
   ]
 };
